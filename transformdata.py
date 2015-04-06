@@ -6,7 +6,7 @@ import numpy as np
 
 from time import time
 from lxml import etree
-from random import randint, sample, choice
+from random import sample, choice
 
 __author__ = 'anton-goy'
 

@@ -7,7 +7,6 @@ import numpy as np
 from time import time
 
 from sklearn.cross_validation import KFold
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 
@@ -34,7 +33,7 @@ def main():
     targets = data_set[:, -1]
     data_set = data_set[:, :-1]
 
-    classifier = RandomForestClassifier(n_estimators=60)
+    classifier = RandomForestClassifier(n_estimators=60, max_depth=9)
 
     if mode == 'train':
         print('Model training...')
