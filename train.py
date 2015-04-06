@@ -34,7 +34,7 @@ def main():
     targets = data_set[:, -1]
     data_set = data_set[:, :-1]
 
-    classifier = RandomForestClassifier()
+    classifier = RandomForestClassifier(n_estimators=60)
 
     if mode == 'train':
         print('Model training...')
@@ -60,9 +60,9 @@ def main():
             precision += precision_score(targets[test_index], predicts)
             recall += recall_score(targets[test_index], predicts)
 
-        print('Accuracy =', accuracy / n_folds,
-              'Precision =', precision / n_folds,
-              'Recall =', recall / n_folds, sep='\n')
+        print('Accuracy =', accuracy / n_folds)
+        print('Precision =', precision / n_folds)
+        print('Recall =', recall / n_folds,)
 
     else:
         print('Cannot recognize mode...')

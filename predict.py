@@ -15,19 +15,19 @@ def generate_features(char, pos, text):
     feature_vector = [ord(char)]
 
     if pos != text_len - 1:
-        feature_vector.append(ord(text[pos + 1]))
+        feature_vector.append(int(text[pos + 1].isupper()))
     else:
-        feature_vector.append(-1)
+        feature_vector.append(0)
 
     if pos != 0:
-        feature_vector.append(ord(text[pos - 1]))
+        feature_vector.append(int(text[pos - 1].isupper()))
     else:
-        feature_vector.append(-1)
+        feature_vector.append(0)
 
     if pos < text_len - 2:
-        feature_vector.append(ord(text[pos + 2]))
+        feature_vector.append(int(text[pos + 2].isupper()))
     else:
-        feature_vector.append(-1)
+        feature_vector.append(0)
 
     for i, c in enumerate(reversed(text[:pos + 1])):
         if c == ' ':
@@ -48,8 +48,6 @@ def generate_features(char, pos, text):
             feature_vector.append(-1)
         else:
             feature_vector.append(i + 1)
-
-    assert len(feature_vector) == 6
 
     return feature_vector
 
@@ -80,11 +78,9 @@ def main():
 
         split_positions = [positions[i] for i, predict in enumerate(predict_targets) if predict == 1]
 
-        print(split_positions)
-
         print(line[:split_positions[0]+1])
         for a, b in pairwise(split_positions):
-            print(line[a+1:b+1].strip())
+            print(line[a + 1:b + 1].strip())
 
         print()
 

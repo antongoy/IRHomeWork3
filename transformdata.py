@@ -21,25 +21,17 @@ def generate_features_endchar(char, pos, paragraph):
     current_sentence = paragraph[pos]
     next_sentence = None if pos == n_sentences - 1 else paragraph[pos + 1]
 
-    feature_vector = [ord(char)]
-
-    if next_sentence:
-        feature_vector.append(ord(' '))
-    else:
-        feature_vector.append(-1)
+    feature_vector = [ord(char), 0]
 
     if len(current_sentence) > 1:
-        feature_vector.append(ord(current_sentence[-2]))
+        feature_vector.append(int(current_sentence[-2].isupper()))
     else:
-        if pos != 0:
-            feature_vector.append(ord(' '))
-        else:
-            feature_vector.append(-1)
+        feature_vector.append(0)
 
     if next_sentence:
-        feature_vector.append(ord(next_sentence[0]))
+        feature_vector.append(int(next_sentence[0].isupper()))
     else:
-        feature_vector.append(-1)
+        feature_vector.append(0)
 
     for i, c in enumerate(reversed(current_sentence)):
         if c == ' ':
@@ -56,8 +48,6 @@ def generate_features_endchar(char, pos, paragraph):
     else:
         feature_vector.append(1)
 
-    assert len(feature_vector) == 6
-
     feature_vector.append(1)
 
     return feature_vector
@@ -67,30 +57,18 @@ def generate_features_commonchar(char, char_pos, sentence_pos, paragraph):
 
     current_sentence = paragraph[sentence_pos]
 
-    # ord for the current character
-    # ord for the next character
-    feature_vector = [ord(char), ord(current_sentence[char_pos + 1])]
+    feature_vector = [ord(char), int(current_sentence[char_pos + 1].isupper())]
 
-    # ord for the previous character
-    # if the current character is the first in the sentence
     if char_pos == 0:
-        if sentence_pos != 0:
-            feature_vector.append(ord(' '))
-        else:
-            feature_vector.append(-1)
+        feature_vector.append(0)
     else:
-        feature_vector.append(ord(current_sentence[char_pos - 1]))
+        feature_vector.append(int(current_sentence[char_pos - 1].isupper()))
 
-    # char_pos points to last by one character
     if char_pos == len(current_sentence) - 2:
-        if sentence_pos == len(paragraph) - 1:
-            feature_vector.append(-1)
-        else:
-            feature_vector.append(ord(' '))
+        feature_vector.append(0)
     else:
-        feature_vector.append(ord(current_sentence[char_pos + 2]))
+        feature_vector.append(int(current_sentence[char_pos + 2].isupper()))
 
-    # Distance to a previous space character
     for i, c in enumerate(reversed(current_sentence[:char_pos + 1])):
         if c == ' ':
                 feature_vector.append(i)
@@ -101,7 +79,6 @@ def generate_features_commonchar(char, char_pos, sentence_pos, paragraph):
         else:
             feature_vector.append(i + 1)
 
-    # Distance to the next space character
     for i, c in enumerate(current_sentence[char_pos:]):
         if c == ' ':
                 feature_vector.append(i)
@@ -111,8 +88,6 @@ def generate_features_commonchar(char, char_pos, sentence_pos, paragraph):
             feature_vector.append(-1)
         else:
             feature_vector.append(i + 1)
-
-    assert len(feature_vector) == 6
 
     feature_vector.append(0)
 
@@ -150,9 +125,10 @@ def main():
                 if not need_characters:
                     continue
 
-                pos = sample(need_characters, 1)[0]
+                positions = sample(need_characters, 1 if len(need_characters) < 3 else 2 if len(need_characters) < 2 else 1)
 
-                data_set.append(generate_features_commonchar(sentence[pos], pos, i, paragraph_sentences))
+                for pos in positions:
+                    data_set.append(generate_features_commonchar(sentence[pos], pos, i, paragraph_sentences))
 
                 end_char = choice('.!?') if sentence[-1] not in '.!?' else sentence[-1]
 
