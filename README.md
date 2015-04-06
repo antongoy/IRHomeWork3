@@ -13,4 +13,4 @@
 ## predict.py
 
 * **Run:** ./predict.py _file_with_text_
-* predict.py reads _file_with_text_ and splits its into sentences
+* predict.py reads _file_with_text_ and splits it into sentences

@@ -79,7 +79,7 @@ def main():
 
             predict_targets = classifier.predict(samples)
 
-            split_positions = [i for i, predict in enumerate(predict_targets) if predict == 0]
+            split_positions = [i for i, predict in enumerate(predict_targets) if predict == 1]
 
             print(line[:split_positions[0]+1])
             for a, b in pairwise(split_positions):

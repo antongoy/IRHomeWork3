@@ -8,6 +8,7 @@ from time import time
 
 from sklearn.cross_validation import KFold
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 from sklearn.externals.joblib import dump
@@ -23,7 +24,7 @@ def arg_parse():
 
 
 def main():
-    input_filename, mode = sys.argv[1]
+    input_filename, mode = arg_parse()
 
     time1 = time()
 
@@ -33,7 +34,7 @@ def main():
     targets = data_set[:, -1]
     data_set = data_set[:, :-1]
 
-    classifier = DecisionTreeClassifier(max_depth=5)
+    classifier = RandomForestClassifier()
 
     if mode == 'train':
         print('Model training...')

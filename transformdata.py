@@ -131,7 +131,6 @@ def main():
 
     paragraph_sentences = []
     data_set = []
-    targets = []
 
     print('Reading sentences.xml...')
     for action, element in paragraph_context:
