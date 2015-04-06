@@ -6,7 +6,7 @@ import numpy as np
 
 from time import time
 from lxml import etree
-from random import randint, sample
+from random import randint, sample, choice
 
 __author__ = 'anton-goy'
 
@@ -26,7 +26,7 @@ def generate_features_endchar(char, pos, paragraph):
     if next_sentence:
         feature_vector.append(ord(' '))
     else:
-        feature_vector.append(ord('\n'))
+        feature_vector.append(-1)
 
     if len(current_sentence) > 1:
         feature_vector.append(ord(current_sentence[-2]))
@@ -39,7 +39,7 @@ def generate_features_endchar(char, pos, paragraph):
     if next_sentence:
         feature_vector.append(ord(next_sentence[0]))
     else:
-        feature_vector.append(ord('\n'))
+        feature_vector.append(-1)
 
     for i, c in enumerate(reversed(current_sentence)):
         if c == ' ':
@@ -51,13 +51,10 @@ def generate_features_endchar(char, pos, paragraph):
         else:
             feature_vector.append(i + 1)
 
-    if char == ' ':
-        feature_vector.append(0)
+    if pos == n_sentences - 1:
+        feature_vector.append(-1)
     else:
-        if pos == n_sentences - 1:
-            feature_vector.append(-1)
-        else:
-            feature_vector.append(1)
+        feature_vector.append(1)
 
     assert len(feature_vector) == 6
 
@@ -87,7 +84,7 @@ def generate_features_commonchar(char, char_pos, sentence_pos, paragraph):
     # char_pos points to last by one character
     if char_pos == len(current_sentence) - 2:
         if sentence_pos == len(paragraph) - 1:
-            feature_vector.append(ord('\n'))
+            feature_vector.append(-1)
         else:
             feature_vector.append(ord(' '))
     else:
@@ -135,7 +132,7 @@ def main():
     print('Reading sentences.xml...')
     for action, element in paragraph_context:
         if action == 'end' and element.tag == 'source':
-            paragraph_sentences.append(element.text)
+            paragraph_sentences.append(element.text.strip())
             continue
 
         if action == 'start' and element.tag == 'paragraph':
@@ -149,11 +146,17 @@ def main():
                 if sentence_len == 1:
                     continue
 
-                pos = randint(0, sentence_len - 2)
+                need_characters = [k for k, char in enumerate(sentence) if char in '.!?' and k != sentence_len - 1]
+                if not need_characters:
+                    continue
+
+                pos = sample(need_characters, 1)[0]
 
                 data_set.append(generate_features_commonchar(sentence[pos], pos, i, paragraph_sentences))
 
-                end_char = ' ' if sentence[-1].isalpha() else sentence[-1]
+                end_char = choice('.!?') if sentence[-1] not in '.!?' else sentence[-1]
+
+                paragraph_sentences[i] = sentence[:-1] + end_char
 
                 data_set.append(generate_features_endchar(end_char, i, paragraph_sentences))
 

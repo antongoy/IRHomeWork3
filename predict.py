@@ -27,7 +27,7 @@ def generate_features(char, pos, text):
     if pos < text_len - 2:
         feature_vector.append(ord(text[pos + 2]))
     else:
-        feature_vector.append(0)
+        feature_vector.append(-1)
 
     for i, c in enumerate(reversed(text[:pos + 1])):
         if c == ' ':
@@ -67,6 +67,8 @@ def main():
         samples = []
         positions = []
 
+        print()
+
         for i, char in enumerate(line):
             if char in '.!?':
                 samples.append(generate_features(char, i, line))
@@ -77,6 +79,8 @@ def main():
         predict_targets = classifier.predict(samples)
 
         split_positions = [positions[i] for i, predict in enumerate(predict_targets) if predict == 1]
+
+        print(split_positions)
 
         print(line[:split_positions[0]+1])
         for a, b in pairwise(split_positions):
