@@ -5,8 +5,6 @@ import sys
 import numpy as np
 
 from itertools import izip, tee
-from codecs import open
-
 from sklearn.externals import joblib
 
 __author__ = 'anton-goy'
@@ -63,30 +61,28 @@ def pairwise(iterable):
 
 
 def main():
-
-    input_filename = sys.argv[1]
-
     classifier = joblib.load('classifier.plk')
 
-    with open(input_filename, 'r', encoding='utf-8') as input_file:
-        for line in input_file:
-            samples = []
+    for line in sys.stdin:
+        samples = []
+        positions = []
 
-            for i, char in enumerate(line):
+        for i, char in enumerate(line):
+            if char in '.!?':
                 samples.append(generate_features(char, i, line))
+                positions.append(i)
 
-            samples = np.array(samples, dtype=np.int32)
+        samples = np.array(samples, dtype=np.int32)
 
-            predict_targets = classifier.predict(samples)
+        predict_targets = classifier.predict(samples)
 
-            split_positions = [i for i, predict in enumerate(predict_targets) if predict == 1]
+        split_positions = [positions[i] for i, predict in enumerate(predict_targets) if predict == 1]
 
-            print(line[:split_positions[0]+1])
-            for a, b in pairwise(split_positions):
-                print(line[a+1:b+1].strip())
+        print(line[:split_positions[0]+1])
+        for a, b in pairwise(split_positions):
+            print(line[a+1:b+1].strip())
 
-            print()
-
+        print()
 
 if __name__ == '__main__':
     main()

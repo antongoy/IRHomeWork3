@@ -12,5 +12,5 @@
     
 ## predict.py
 
-* **Run:** ./predict.py _file_with_text_
-* predict.py reads _file_with_text_ and splits it into sentences
+* **Run:** ./predict.py 
+* predict.py reads from stdin paragraphs and splits them into sentences
